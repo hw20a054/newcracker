@@ -1,0 +1,613 @@
+<html>
+
+<head>
+    <title>three.js + ar.js</title>
+    <meta name="viewport" content="width=device-width, viewport-fit=cover, shrink-to-fit=no" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <canvas></canvas>
+    </div>
+    <!--❶ three.jsとAR.jsを読み込む-->
+    <script src="https://unpkg.com/three@0.127.0/build/three.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.3.3/three.js/build/ar.js"></script>
+    <script async>
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('canvas'),
+            antialias: true,
+            alpha: true
+        });
+        const camera = new THREE.PerspectiveCamera();
+        const scene = new THREE.Scene();
+        const markerRoot = new THREE.Group();
+        const arToolkitContext = new THREEx.ArToolkitContext({
+            cameraParametersUrl: './camera.dat', // ❷ camera.datを読み込む
+            detectionMode: 'mono'
+        });
+        const arToolkitSource = new THREEx.ArToolkitSource({
+            sourceType: 'webcam'
+        });
+        const arMarkerControl = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+            type: 'pattern',
+            patternUrl: 'pattern-cracker.patt' // ❸ pattern.pattを読み込む
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        window.addEventListener('resize', handleResize, {
+            passive: true
+        });
+
+        arToolkitContext.init(() => {
+            camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+        });
+
+        arToolkitSource.init(() => {
+            document.querySelector('.wrapper').appendChild(arToolkitSource.domElement); // ❹ videoタグを.wrapper配下に移動させる
+            setTimeout(handleResize, 400); // ❺ リサイズイベントを一度発火させる
+        });
+
+        scene.add(markerRoot);
+
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF);
+        directionalLight.position.set(1, 0, 1);
+        scene.add(directionalLight);
+
+        var flg = false;
+        var seflg = false;
+
+
+
+        const kurakka_geometry = new THREE.ConeGeometry(0.29, 1, 36, 1, false);
+        const kurakka_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        var left_kurakka = new THREE.Mesh(kurakka_geometry, kurakka_material);
+        var right_kurakka = new THREE.Mesh(kurakka_geometry, kurakka_material);
+        const kurakka_wireframe_geometry = new THREE.ConeGeometry(0.29, 1, 18, 1, true);
+        const kurakka_wireframe_material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        kurakka_wireframe_material.wireframe = true;
+        const left_kurakka_wireframe = new THREE.Mesh(kurakka_wireframe_geometry, kurakka_wireframe_material);
+        const right_kurakka_wireframe = new THREE.Mesh(kurakka_wireframe_geometry, kurakka_wireframe_material);
+        left_kurakka.add(left_kurakka_wireframe);
+        right_kurakka.add(right_kurakka_wireframe);
+        left_kurakka.rotation.x += Math.PI / 180 * 45;
+        left_kurakka.rotation.z += Math.PI / 180 * 45;
+        right_kurakka.rotation.x += Math.PI / 180 * 45;
+        right_kurakka.rotation.z -= Math.PI / 180 * 45;
+        left_kurakka.position.set(-2, 0, 1);
+        right_kurakka.position.set(2, 0, 1);
+        markerRoot.add(left_kurakka);
+        markerRoot.add(right_kurakka);
+
+        var count = 0.01;
+        function createkamihubuki(c) {
+            const kamihubuki_geometry = new THREE.BoxGeometry(0.1, 0.001, 0.15);
+            const kamihubuki_material = new THREE.MeshBasicMaterial({ color: c });
+            const kamihubuki = new THREE.Mesh(kamihubuki_geometry, kamihubuki_material);
+            return kamihubuki;
+        }
+        const kamihubuki1 = createkamihubuki(0xff0000);
+        markerRoot.add(kamihubuki1);
+        kamihubuki1.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki2 = createkamihubuki(0x008000);
+        markerRoot.add(kamihubuki2);
+        kamihubuki2.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki3 = createkamihubuki(0x0000ff);
+        markerRoot.add(kamihubuki3);
+        kamihubuki3.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki4 = createkamihubuki(0xff69b4);
+        markerRoot.add(kamihubuki4);
+        kamihubuki4.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki5 = createkamihubuki(0xffff00);
+        markerRoot.add(kamihubuki5);
+        kamihubuki5.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki6 = createkamihubuki(0x00bfff);
+        markerRoot.add(kamihubuki6);
+        kamihubuki6.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki7 = createkamihubuki(0xadff2f);
+        markerRoot.add(kamihubuki7);
+        kamihubuki7.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki8 = createkamihubuki(0xffa500);
+        markerRoot.add(kamihubuki8);
+        kamihubuki8.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki9 = createkamihubuki(0xffb6c1);
+        markerRoot.add(kamihubuki9);
+        kamihubuki9.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki10 = createkamihubuki(0x9370bc);
+        markerRoot.add(kamihubuki10);
+        kamihubuki10.position.set(-1.65, -0.15, 0.93);
+
+        const kamihubuki11 = createkamihubuki(0x9370bc);
+        markerRoot.add(kamihubuki11);
+        kamihubuki11.position.set(1.65, -0.15, 0.93);
+        const kamihubuki12 = createkamihubuki(0xffb6c1);
+        markerRoot.add(kamihubuki12);
+        kamihubuki12.position.set(1.65, -0.15, 0.93);
+        const kamihubuki13 = createkamihubuki(0xffa500);
+        markerRoot.add(kamihubuki13);
+        kamihubuki13.position.set(1.65, -0.15, 0.93);
+        const kamihubuki14 = createkamihubuki(0xadff2f);
+        markerRoot.add(kamihubuki14);
+        kamihubuki14.position.set(1.65, -0.15, 0.93);
+        const kamihubuki15 = createkamihubuki(0x00bfff);
+        markerRoot.add(kamihubuki15);
+        kamihubuki15.position.set(1.65, -0.15, 0.93);
+        const kamihubuki16 = createkamihubuki(0xffff00);
+        markerRoot.add(kamihubuki16);
+        kamihubuki16.position.set(1.65, -0.15, 0.93);
+        const kamihubuki17 = createkamihubuki(0xff69b4);
+        markerRoot.add(kamihubuki17);
+        kamihubuki17.position.set(1.65, -0.15, 0.93);
+        const kamihubuki18 = createkamihubuki(0x0000ff);
+        markerRoot.add(kamihubuki18);
+        kamihubuki18.position.set(1.65, -0.15, 0.93);
+        const kamihubuki19 = createkamihubuki(0x008000);
+        markerRoot.add(kamihubuki19);
+        kamihubuki19.position.set(1.65, -0.15, 0.93);
+        const kamihubuki20 = createkamihubuki(0xff0000);
+        markerRoot.add(kamihubuki20);
+        kamihubuki20.position.set(1.65, -0.15, 0.93);
+
+        const kamihubuki21 = createkamihubuki(0x9370bc);
+        markerRoot.add(kamihubuki21);
+        kamihubuki21.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki22 = createkamihubuki(0xffb6c1);
+        markerRoot.add(kamihubuki22);
+        kamihubuki22.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki23 = createkamihubuki(0xffa500);
+        markerRoot.add(kamihubuki23);
+        kamihubuki23.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki24 = createkamihubuki(0xadff2f);
+        markerRoot.add(kamihubuki24);
+        kamihubuki24.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki25 = createkamihubuki(0x00bfff);
+        markerRoot.add(kamihubuki25);
+        kamihubuki25.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki26 = createkamihubuki(0x00bfff);
+        markerRoot.add(kamihubuki26);
+        kamihubuki26.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki27 = createkamihubuki(0xff69b4);
+        markerRoot.add(kamihubuki27);
+        kamihubuki27.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki28 = createkamihubuki(0x0000ff);
+        markerRoot.add(kamihubuki28);
+        kamihubuki28.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki29 = createkamihubuki(0x008000);
+        markerRoot.add(kamihubuki29);
+        kamihubuki29.position.set(-1.65, -0.15, 0.93);
+        const kamihubuki30 = createkamihubuki(0xff0000);
+        markerRoot.add(kamihubuki30);
+        kamihubuki30.position.set(-1.65, -0.15, 0.93);
+
+        const kamihubuki31 = createkamihubuki(0xff0000);
+        markerRoot.add(kamihubuki31);
+        kamihubuki31.position.set(1.65, -0.15, 0.93);
+        const kamihubuki32 = createkamihubuki(0x008000);
+        markerRoot.add(kamihubuki32);
+        kamihubuki32.position.set(1.65, -0.15, 0.93);
+        const kamihubuki33 = createkamihubuki(0x0000ff);
+        markerRoot.add(kamihubuki33);
+        kamihubuki33.position.set(1.65, -0.15, 0.93);
+        const kamihubuki34 = createkamihubuki(0xff69b4);
+        markerRoot.add(kamihubuki34);
+        kamihubuki34.position.set(1.65, -0.15, 0.93);
+        const kamihubuki35 = createkamihubuki(0xffff00);
+        markerRoot.add(kamihubuki35);
+        kamihubuki35.position.set(1.65, -0.15, 0.93);
+        const kamihubuki36 = createkamihubuki(0x00bfff);
+        markerRoot.add(kamihubuki36);
+        kamihubuki36.position.set(1.65, -0.15, 0.93);
+        const kamihubuki37 = createkamihubuki(0xadff2f);
+        markerRoot.add(kamihubuki37);
+        kamihubuki37.position.set(1.65, -0.15, 0.93);
+        const kamihubuki38 = createkamihubuki(0xffa500);
+        markerRoot.add(kamihubuki38);
+        kamihubuki38.position.set(1.65, -0.15, 0.93);
+        const kamihubuki39 = createkamihubuki(0xffb6c1);
+        markerRoot.add(kamihubuki39);
+        kamihubuki39.position.set(1.65, -0.15, 0.93);
+        const kamihubuki40 = createkamihubuki(0x9370bc);
+        markerRoot.add(kamihubuki40);
+        kamihubuki40.position.set(1.65, -0.15, 0.93);
+
+        function createuzumaki(c, l) {
+            class CustomSinCurve extends THREE.Curve {
+
+                constructor(scale = 1) {
+                    super();
+                    this.scale = scale;
+                }
+
+                getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                    const tx = Math.sin(9 * Math.PI * t) * 0.004;
+                    const ty = t * l;
+                    const tz = Math.cos(9 * Math.PI * t) * 0.004;
+
+                    return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+                }
+            }
+            const path = new CustomSinCurve(10);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.015, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.wireframe = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        const uzumaki1 = createuzumaki(0xdc143c, 0.055);
+        markerRoot.add(uzumaki1);
+        uzumaki1.position.set(-1.84, -0.15, 0.87);
+        uzumaki1.rotation.x += Math.PI / 180 * 45;
+        uzumaki1.rotation.z += Math.PI / 180 * 45;
+        const uzumaki2 = createuzumaki(0xffff00, 0.04);
+        markerRoot.add(uzumaki2);
+        uzumaki2.position.set(-1.78, -0.15, 0.95);
+        uzumaki2.rotation.x += Math.PI / 180 * 40;
+        uzumaki2.rotation.z += Math.PI / 180 * 50;
+        const uzumaki3 = createuzumaki(0x008000, 0.05);
+        markerRoot.add(uzumaki3);
+        uzumaki3.position.set(-1.78, -0.15, 0.93);
+        uzumaki3.rotation.x += Math.PI / 180 * 40;
+        uzumaki3.rotation.z += Math.PI / 180 * 50;
+
+        const uzumaki4 = createuzumaki(0x9932cc, 0.055);
+        markerRoot.add(uzumaki4);
+        uzumaki4.position.set(1.84, -0.15, 0.87);
+        uzumaki4.rotation.x += Math.PI / 180 * 45;
+        uzumaki4.rotation.z -= Math.PI / 180 * 45;
+        const uzumaki5 = createuzumaki(0x4169e1, 0.05);
+        markerRoot.add(uzumaki5);
+        uzumaki5.position.set(1.78, -0.15, 0.93);
+        uzumaki5.rotation.x += Math.PI / 180 * 40;
+        uzumaki5.rotation.z -= Math.PI / 180 * 50;
+        const uzumaki6 = createuzumaki(0x00ff7f, 0.04);
+        markerRoot.add(uzumaki6);
+        uzumaki6.position.set(1.78, -0.15, 0.95);
+        uzumaki6.rotation.x += Math.PI / 180 * 40;
+        uzumaki6.rotation.z -= Math.PI / 180 * 50;
+
+
+
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+        const AudioLoader = new THREE.AudioLoader();
+        const kurakkaSound = new THREE.Audio(listener);
+        AudioLoader.load('./kurakka.mp3', function (buffer) {
+            kurakkaSound.setBuffer(buffer);
+            kurakkaSound.setLoop(false);
+            kurakkaSound.setVolume(1);
+
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (flg == true) {
+                if (seflg == false) {
+                    kurakkaSound.play();
+                    seflg = true;
+                }
+
+                kamihubuki1.position.x += 0.04;
+                kamihubuki1.position.y -= 0.04;
+                kamihubuki1.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki1.rotation.x += Math.PI / 180 * 15;
+                kamihubuki1.rotation.y += Math.PI / 180 * 15;
+                kamihubuki1.rotation.z += Math.PI / 180 * 15;
+                kamihubuki2.position.x += 0.06;
+                kamihubuki2.position.y -= 0.03;
+                kamihubuki2.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki2.rotation.x += Math.PI / 180 * 25;
+                kamihubuki2.rotation.y += Math.PI / 180 * 25;
+                kamihubuki2.rotation.z += Math.PI / 180 * 25;
+                kamihubuki3.position.x += 0.03;
+                kamihubuki3.position.y -= 0.06;
+                kamihubuki3.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki3.rotation.x += Math.PI / 180 * 10;
+                kamihubuki3.rotation.y += Math.PI / 180 * 10;
+                kamihubuki3.rotation.z += Math.PI / 180 * 10;
+                kamihubuki4.position.x += 0.05;
+                kamihubuki4.position.y -= 0.05;
+                kamihubuki4.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki4.rotation.x += Math.PI / 180 * 5;
+                kamihubuki4.rotation.y += Math.PI / 180 * 5;
+                kamihubuki4.rotation.z += Math.PI / 180 * 5;
+                kamihubuki5.position.x += 0.01;
+                kamihubuki5.position.y -= 0.03;
+                kamihubuki5.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki5.rotation.x += Math.PI / 180 * 30;
+                kamihubuki5.rotation.y += Math.PI / 180 * 30;
+                kamihubuki5.rotation.z += Math.PI / 180 * 30;
+                kamihubuki6.position.x += 0.02;
+                kamihubuki6.position.y -= 0.05;
+                kamihubuki6.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki6.rotation.x += Math.PI / 180 * 30;
+                kamihubuki6.rotation.y += Math.PI / 180 * 30;
+                kamihubuki6.rotation.z += Math.PI / 180 * 30;
+                kamihubuki7.position.x += 0.07;
+                kamihubuki7.position.y -= 0.06;
+                kamihubuki7.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki7.rotation.x += Math.PI / 180 * 5;
+                kamihubuki7.rotation.y += Math.PI / 180 * 5;
+                kamihubuki7.rotation.z += Math.PI / 180 * 5;
+                kamihubuki8.position.x += 0.04;
+                kamihubuki8.position.y -= 0.03;
+                kamihubuki8.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki8.rotation.x += Math.PI / 180 * 10;
+                kamihubuki8.rotation.y += Math.PI / 180 * 10;
+                kamihubuki8.rotation.z += Math.PI / 180 * 10;
+                kamihubuki9.position.x += 0.04;
+                kamihubuki9.position.y -= 0.05;
+                kamihubuki9.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki9.rotation.x += Math.PI / 180 * 25;
+                kamihubuki9.rotation.y += Math.PI / 180 * 25;
+                kamihubuki9.rotation.z += Math.PI / 180 * 25;
+                kamihubuki10.position.x += 0.05;
+                kamihubuki10.position.y -= 0.02;
+                kamihubuki10.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki10.rotation.x += Math.PI / 180 * 15;
+                kamihubuki10.rotation.y += Math.PI / 180 * 15;
+                kamihubuki10.rotation.z += Math.PI / 180 * 15;
+
+                kamihubuki11.position.x -= 0.04;
+                kamihubuki11.position.y -= 0.04;
+                kamihubuki11.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki11.rotation.x += Math.PI / 180 * 15;
+                kamihubuki11.rotation.y += Math.PI / 180 * 15;
+                kamihubuki11.rotation.z += Math.PI / 180 * 15;
+                kamihubuki12.position.x -= 0.06;
+                kamihubuki12.position.y -= 0.03;
+                kamihubuki12.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki12.rotation.x += Math.PI / 180 * 25;
+                kamihubuki12.rotation.y += Math.PI / 180 * 25;
+                kamihubuki12.rotation.z += Math.PI / 180 * 25;
+                kamihubuki13.position.x -= 0.03;
+                kamihubuki13.position.y -= 0.06;
+                kamihubuki13.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki13.rotation.x += Math.PI / 180 * 10;
+                kamihubuki13.rotation.y += Math.PI / 180 * 10;
+                kamihubuki13.rotation.z += Math.PI / 180 * 10;
+                kamihubuki14.position.x -= 0.05;
+                kamihubuki14.position.y -= 0.05;
+                kamihubuki14.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki14.rotation.x += Math.PI / 180 * 5;
+                kamihubuki14.rotation.y += Math.PI / 180 * 5;
+                kamihubuki14.rotation.z += Math.PI / 180 * 5;
+                kamihubuki15.position.x -= 0.01;
+                kamihubuki15.position.y -= 0.03;
+                kamihubuki15.position.z = (count - 1.414) ** 2 - 1.5;
+                kamihubuki15.rotation.x += Math.PI / 180 * 30;
+                kamihubuki15.rotation.y += Math.PI / 180 * 30;
+                kamihubuki15.rotation.z += Math.PI / 180 * 30;
+                kamihubuki16.position.x -= 0.02;
+                kamihubuki16.position.y -= 0.05;
+                kamihubuki16.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki16.rotation.x += Math.PI / 180 * 30;
+                kamihubuki16.rotation.y += Math.PI / 180 * 30;
+                kamihubuki16.rotation.z += Math.PI / 180 * 30;
+                kamihubuki17.position.x -= 0.07;
+                kamihubuki17.position.y -= 0.06;
+                kamihubuki17.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki17.rotation.x += Math.PI / 180 * 5;
+                kamihubuki17.rotation.y += Math.PI / 180 * 5;
+                kamihubuki17.rotation.z += Math.PI / 180 * 5;
+                kamihubuki18.position.x -= 0.04;
+                kamihubuki18.position.y -= 0.03;
+                kamihubuki18.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki18.rotation.x += Math.PI / 180 * 10;
+                kamihubuki18.rotation.y += Math.PI / 180 * 10;
+                kamihubuki18.rotation.z += Math.PI / 180 * 10;
+                kamihubuki19.position.x -= 0.04;
+                kamihubuki19.position.y -= 0.05;
+                kamihubuki19.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki19.rotation.x += Math.PI / 180 * 25;
+                kamihubuki19.rotation.y += Math.PI / 180 * 25;
+                kamihubuki19.rotation.z += Math.PI / 180 * 25;
+                kamihubuki20.position.x -= 0.05;
+                kamihubuki20.position.y -= 0.02;
+                kamihubuki20.position.z = (count - 1.732) ** 2 - 2.5;
+                kamihubuki20.rotation.x += Math.PI / 180 * 15;
+                kamihubuki20.rotation.y += Math.PI / 180 * 15;
+                kamihubuki20.rotation.z += Math.PI / 180 * 15;
+
+                kamihubuki21.position.x += 0.01;
+                kamihubuki21.position.y -= 0.06;
+                kamihubuki21.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki21.rotation.x += Math.PI / 180 * 15;
+                kamihubuki21.rotation.y += Math.PI / 180 * 15;
+                kamihubuki21.rotation.z += Math.PI / 180 * 15;
+                kamihubuki22.position.x += 0.02;
+                kamihubuki22.position.y -= 0.08;
+                kamihubuki22.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki22.rotation.x += Math.PI / 180 * 25;
+                kamihubuki22.rotation.y += Math.PI / 180 * 25;
+                kamihubuki22.rotation.z += Math.PI / 180 * 25;
+                kamihubuki23.position.x += 0.04;
+                kamihubuki23.position.y -= 0.02;
+                kamihubuki23.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki23.rotation.x += Math.PI / 180 * 10;
+                kamihubuki23.rotation.y += Math.PI / 180 * 10;
+                kamihubuki23.rotation.z += Math.PI / 180 * 10;
+                kamihubuki24.position.x += 0.06;
+                kamihubuki24.position.y -= 0.02;
+                kamihubuki24.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki24.rotation.x += Math.PI / 180 * 5;
+                kamihubuki24.rotation.y += Math.PI / 180 * 5;
+                kamihubuki24.rotation.z += Math.PI / 180 * 5;
+                kamihubuki25.position.x += 0.07;
+                kamihubuki25.position.y -= 0.03;
+                kamihubuki25.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki25.rotation.x += Math.PI / 180 * 30;
+                kamihubuki25.rotation.y += Math.PI / 180 * 30;
+                kamihubuki25.rotation.z += Math.PI / 180 * 30;
+                kamihubuki26.position.x += 0.01;
+                kamihubuki26.position.y -= 0.06;
+                kamihubuki26.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki26.rotation.x += Math.PI / 180 * 30;
+                kamihubuki26.rotation.y += Math.PI / 180 * 30;
+                kamihubuki26.rotation.z += Math.PI / 180 * 30;
+                kamihubuki27.position.x += 0.02;
+                kamihubuki27.position.y -= 0.07;
+                kamihubuki27.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki27.rotation.x += Math.PI / 180 * 5;
+                kamihubuki27.rotation.y += Math.PI / 180 * 5;
+                kamihubuki27.rotation.z += Math.PI / 180 * 5;
+                kamihubuki28.position.x += 0.07;
+                kamihubuki28.position.y -= 0.02;
+                kamihubuki28.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki28.rotation.x += Math.PI / 180 * 10;
+                kamihubuki28.rotation.y += Math.PI / 180 * 10;
+                kamihubuki28.rotation.z += Math.PI / 180 * 10;
+                kamihubuki29.position.x += 0.02;
+                kamihubuki29.position.y -= 0.08;
+                kamihubuki29.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki29.rotation.x += Math.PI / 180 * 25;
+                kamihubuki29.rotation.y += Math.PI / 180 * 25;
+                kamihubuki29.rotation.z += Math.PI / 180 * 25;
+                kamihubuki30.position.x += 0.06;
+                kamihubuki30.position.y -= 0.01;
+                kamihubuki30.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki30.rotation.x += Math.PI / 180 * 15;
+                kamihubuki30.rotation.y += Math.PI / 180 * 15;
+                kamihubuki30.rotation.z += Math.PI / 180 * 15;
+
+                kamihubuki31.position.x -= 0.01;
+                kamihubuki31.position.y -= 0.06;
+                kamihubuki31.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki31.rotation.x += Math.PI / 180 * 15;
+                kamihubuki31.rotation.y += Math.PI / 180 * 15;
+                kamihubuki31.rotation.z += Math.PI / 180 * 15;
+                kamihubuki32.position.x -= 0.02;
+                kamihubuki32.position.y -= 0.08;
+                kamihubuki32.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki32.rotation.x += Math.PI / 180 * 25;
+                kamihubuki32.rotation.y += Math.PI / 180 * 25;
+                kamihubuki32.rotation.z += Math.PI / 180 * 25;
+                kamihubuki33.position.x -= 0.04;
+                kamihubuki33.position.y -= 0.02;
+                kamihubuki33.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki33.rotation.x += Math.PI / 180 * 10;
+                kamihubuki33.rotation.y += Math.PI / 180 * 10;
+                kamihubuki33.rotation.z += Math.PI / 180 * 10;
+                kamihubuki34.position.x -= 0.06;
+                kamihubuki34.position.y -= 0.02;
+                kamihubuki34.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki34.rotation.x += Math.PI / 180 * 5;
+                kamihubuki34.rotation.y += Math.PI / 180 * 5;
+                kamihubuki34.rotation.z += Math.PI / 180 * 5;
+                kamihubuki35.position.x -= 0.07;
+                kamihubuki35.position.y -= 0.03;
+                kamihubuki35.position.z = (count - 2) ** 2 - 3.5;
+                kamihubuki35.rotation.x += Math.PI / 180 * 30;
+                kamihubuki35.rotation.y += Math.PI / 180 * 30;
+                kamihubuki35.rotation.z += Math.PI / 180 * 30;
+                kamihubuki36.position.x -= 0.01;
+                kamihubuki36.position.y -= 0.06;
+                kamihubuki36.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki36.rotation.x += Math.PI / 180 * 30;
+                kamihubuki36.rotation.y += Math.PI / 180 * 30;
+                kamihubuki36.rotation.z += Math.PI / 180 * 30;
+                kamihubuki37.position.x -= 0.02;
+                kamihubuki37.position.y -= 0.07;
+                kamihubuki37.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki37.rotation.x += Math.PI / 180 * 5;
+                kamihubuki37.rotation.y += Math.PI / 180 * 5;
+                kamihubuki37.rotation.z += Math.PI / 180 * 5;
+                kamihubuki38.position.x -= 0.07;
+                kamihubuki38.position.y -= 0.02;
+                kamihubuki38.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki38.rotation.x += Math.PI / 180 * 10;
+                kamihubuki38.rotation.y += Math.PI / 180 * 10;
+                kamihubuki38.rotation.z += Math.PI / 180 * 10;
+                kamihubuki39.position.x -= 0.02;
+                kamihubuki39.position.y -= 0.08;
+                kamihubuki39.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki39.rotation.x += Math.PI / 180 * 25;
+                kamihubuki39.rotation.y += Math.PI / 180 * 25;
+                kamihubuki39.rotation.z += Math.PI / 180 * 25;
+                kamihubuki40.position.x -= 0.06;
+                kamihubuki40.position.y -= 0.01;
+                kamihubuki40.position.z = (count - 1) ** 2 - 0.5;
+                kamihubuki40.rotation.x += Math.PI / 180 * 15;
+                kamihubuki40.rotation.y += Math.PI / 180 * 15;
+                kamihubuki40.rotation.z += Math.PI / 180 * 15;
+
+
+                uzumaki1.position.x += 0.03;
+                uzumaki1.position.y -= 0.09;
+                uzumaki1.position.z = (count - 1.414) ** 2 - 1;
+                uzumaki2.position.x += 0.09;
+                uzumaki2.position.y -= 0.05;
+                uzumaki2.position.z = (count - 1) ** 2 - 0.5;
+                uzumaki3.position.x += 0.02;
+                uzumaki3.position.y -= 0.11;
+                uzumaki3.position.z = (count - 1.732) ** 2 - 1.8;
+                uzumaki4.position.x -= 0.03;
+                uzumaki4.position.y -= 0.09;
+                uzumaki4.position.z = (count - 1.414) ** 2 - 1;
+                uzumaki5.position.x -= 0.02;
+                uzumaki5.position.y -= 0.11;
+                uzumaki5.position.z = (count - 1.732) ** 2 - 1.8;
+                uzumaki6.position.x -= 0.09;
+                uzumaki6.position.y -= 0.05;
+                uzumaki6.position.z = (count - 1) ** 2 - 0.5;
+
+
+                count += 0.03;
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener("mousedown", function (ret) {
+            let mouseX = ret.clientX;                           // マウスのx座標
+            let mouseY = ret.clientY;                           // マウスのy座標
+            //console.log(mouseX + " : " + mouseY);
+            mouseX = (mouseX / window.innerWidth) * 2 - 1;    // -1 ～ +1 に正規化されたx座標
+            mouseY = -(mouseY / window.innerHeight) * 2 + 1;    // -1 ～ +1 に正規化されたy座標
+            let pos = new THREE.Vector3(mouseX, mouseY, 1);     // マウスベクトル
+            pos.unproject(camera);                              // スクリーン座標系をカメラ座標系に変換
+            // レイキャスタを作成（始点, 向きのベクトル）
+            let ray = new THREE.Raycaster(camera.position, pos.sub(camera.position).normalize());
+            let obj = ray.intersectObjects(scene.children, true);   // レイと交差したオブジェクトの取得
+            flg = true;
+            console.log("come");
+            if (obj.length > 0) {                                // 交差したオブジェクトがあれば
+                // picked(obj[0].object.name);                       // ピックされた対象に応じた処理を実行
+                // console.log(obj[0].object.name)
+                // console.log("debug 001");
+            }
+            // console.log("-----");
+        });
+
+        renderer.setAnimationLoop((delta) => {
+            if (arToolkitSource.ready) {
+                arToolkitContext.update(arToolkitSource.domElement);
+            }
+
+            renderer.render(scene, camera);
+        });
+
+        function handleResize() {
+            if (arToolkitSource.ready) {
+                arToolkitSource.onResize();
+                arToolkitSource.copySizeTo(renderer.domElement);
+            }
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+        }
+    </script>
+</body>
+
+</html>
